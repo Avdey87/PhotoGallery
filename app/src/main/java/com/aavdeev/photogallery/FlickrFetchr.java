@@ -4,18 +4,23 @@ package com.aavdeev.photogallery;
 import android.net.Uri;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 public class FlickrFetchr {
     private static final String TAG = "FlickrFetchr";
     private static final String API_KEY = "6771afce2581b99038dbcc1b87e88750";
 
-    public byte [] getUrlBytes(String urlSpec) throws IOException {
+    public byte[] getUrlBytes(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         try {
@@ -29,17 +34,17 @@ public class FlickrFetchr {
             int bytesRead = 0;
             byte[] buffer = new byte[1024];
             while ((bytesRead = in.read(buffer)) > 0) {
-                out.write(buffer, 0 , bytesRead);
+                out.write(buffer, 0, bytesRead);
             }
             out.close();
             return out.toByteArray();
-        }finally {
+        } finally {
             connection.disconnect();
         }
 
     }
 
-    public String getUrlString (String urlSpec) throws IOException {
+    public String getUrlString(String urlSpec) throws IOException {
         return new String(getUrlBytes(urlSpec));
     }
 
@@ -50,7 +55,7 @@ public class FlickrFetchr {
     // параметризованных URL-адресов с правильным кодированием символов.
     // Метод Uri.Builder.appendQueryParameter(String,String)
     // автоматически кодирует строки запросов.
-    public void fetchItems()  {
+    public void fetchItems() {
         try {
             String url = Uri.parse("https://api.flickr.com/services/rest/")
                     .buildUpon()
@@ -62,8 +67,32 @@ public class FlickrFetchr {
                     .build().toString();
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON: " + jsonString);
+            JSONObject jsonObject = new JSONObject(jsonString);
+        } catch (JSONException je) {
+            Log.e(TAG, "Failed to parse JSON", je);
         } catch (IOException e) {
             Log.e(TAG, "Failed to fetch items", e);
+        }
+    }
+
+    private void parseItems(List<GalleryItem> items, JSONObject jsonObject)
+        throws IOException, JSONException {
+        JSONObject photosJsonObject = jsonObject.getJSONObject("photos");
+        JSONArray photoJsonArray = photosJsonObject.getJSONArray("photo");
+
+        for (int i = 1; i<photoJsonArray.length(); i++) {
+            JSONObject photoJsonObject = photoJsonArray.getJSONObject(i);
+
+            GalleryItem item = new GalleryItem();
+
+            item.setmId(photoJsonObject.getString("id"));
+            item.setmCaption(photoJsonObject.getString("title"));
+
+            if (!photoJsonObject.has("url_s")) {
+                continue;
+            }
+            item.setmUrl(photoJsonObject.getString("url_s"));
+            items.add(item);
         }
     }
 }
