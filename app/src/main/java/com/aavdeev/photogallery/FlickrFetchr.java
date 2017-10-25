@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FlickrFetchr {
@@ -55,7 +56,8 @@ public class FlickrFetchr {
     // параметризованных URL-адресов с правильным кодированием символов.
     // Метод Uri.Builder.appendQueryParameter(String,String)
     // автоматически кодирует строки запросов.
-    public void fetchItems() {
+    public List<GalleryItem> fetchItems() {
+        List<GalleryItem> items = new ArrayList<>();
         try {
             String url = Uri.parse("https://api.flickr.com/services/rest/")
                     .buildUpon()
@@ -68,11 +70,13 @@ public class FlickrFetchr {
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON: " + jsonString);
             JSONObject jsonObject = new JSONObject(jsonString);
+            parseItems(items, jsonObject);
         } catch (JSONException je) {
             Log.e(TAG, "Failed to parse JSON", je);
         } catch (IOException e) {
             Log.e(TAG, "Failed to fetch items", e);
         }
+        return items;
     }
 
     private void parseItems(List<GalleryItem> items, JSONObject jsonObject)
