@@ -109,6 +109,7 @@ public class PhotoGalleryFragment extends Fragment {
     private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
 
         //возвращает список элементов GalleryItem
+        //загрузка файлов в фоновм резиме
         @Override
         protected List<GalleryItem> doInBackground(Void... params) {
             return new FlickrFetchr().fetchItems();
