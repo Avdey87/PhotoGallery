@@ -2,7 +2,11 @@ package com.aavdeev.photogallery;
 
 
 import android.net.Uri;
+import android.provider.Contacts;
 import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +24,7 @@ import java.util.List;
 public class FlickrFetchr {
     private static final String TAG = "FlickrFetchr";
     private static final String API_KEY = "6771afce2581b99038dbcc1b87e88750";
+    private Contacts.Photos photos;
 
     public byte[] getUrlBytes(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
@@ -80,11 +85,11 @@ public class FlickrFetchr {
     }
 
     private void parseItems(List<GalleryItem> items, JSONObject jsonObject)
-        throws IOException, JSONException {
+            throws IOException, JSONException {
         JSONObject photosJsonObject = jsonObject.getJSONObject("photos");
         JSONArray photoJsonArray = photosJsonObject.getJSONArray("photo");
 
-        for (int i = 1; i<photoJsonArray.length(); i++) {
+        for (int i = 1; i < photoJsonArray.length(); i++) {
             JSONObject photoJsonObject = photoJsonArray.getJSONObject(i);
 
             GalleryItem item = new GalleryItem();
@@ -99,4 +104,12 @@ public class FlickrFetchr {
             items.add(item);
         }
     }
+
+    private void parseGsonItem(List<GalleryItem> items, String jsonString) {
+        Gson gson = new GsonBuilder().create();
+        JSONArray photoArray = gson.fromJson(jsonString, )
+    }
+
+
+
 }
