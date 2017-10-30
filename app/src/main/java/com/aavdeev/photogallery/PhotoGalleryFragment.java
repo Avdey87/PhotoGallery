@@ -32,6 +32,7 @@ public class PhotoGalleryFragment extends Fragment {
        //удержание фрагмента чтобы поворот не приводил к многократному созданию новых объектов AsyncTask
         setRetainInstance(true);
         new FetchItemsTask().execute();
+
     }
 
     @Nullable
