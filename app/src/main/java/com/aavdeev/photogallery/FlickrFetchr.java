@@ -2,19 +2,14 @@ package com.aavdeev.photogallery;
 
 
 import android.net.Uri;
-import android.provider.Contacts;
-import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +21,6 @@ import java.util.List;
 public class FlickrFetchr {
     private static final String TAG = "FlickrFetchr";
     private static final String API_KEY = "6771afce2581b99038dbcc1b87e88750";
-    private Contacts.Photos photos;
 
     //получаем строку подключения
     public byte[] getUrlBytes(String urlSpec) throws IOException {
@@ -88,7 +82,7 @@ public class FlickrFetchr {
         } catch (IOException e) {
             Log.e(TAG, "Failed to fetch items", e);
         }
-     
+
         return items;
     }
 

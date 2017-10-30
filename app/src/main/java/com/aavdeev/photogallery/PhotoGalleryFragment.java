@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.AsyncLayoutInflater;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +19,7 @@ public class PhotoGalleryFragment extends Fragment {
     private RecyclerView mPhotoRecyclerView;
     private static final String TAG = "PhotoGalleryFragment";
     private List<GalleryItem> mItems = new ArrayList<>();
+    private int lastFetchedPage = 1;
 
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
@@ -37,12 +36,29 @@ public class PhotoGalleryFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
 
         mPhotoRecyclerView = (RecyclerView) v
                 .findViewById(R.id.fragment_photo_gallery_recycle_view);
         mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        mPhotoRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                PhotoAdapter adapter = (PhotoAdapter) recyclerView.getAdapter();
+                int lastPosicion = adapter.getLastBoundPosition();
+                GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                int loadBufferPosition = 1;
+                if (lastPosicion >= adapter.getItemCount() - layoutManager.getSpanCount() - loadBufferPosition) {
+                    new FetchItemsTask().execute(lastPosicion + 1);
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
         setupAdapter();
         return v;
     }
@@ -75,6 +91,11 @@ public class PhotoGalleryFragment extends Fragment {
     // Класс переходник
     private class PhotoAdapter extends RecyclerView.Adapter<PhotoHolder> {
         private List<GalleryItem> mGalleryItems;
+        private int lastBoundPosition;
+
+        public int getLastBoundPosition() {
+            return lastBoundPosition;
+        }
 
         public PhotoAdapter(List<GalleryItem> galleryItems) {
             mGalleryItems = galleryItems;
@@ -96,6 +117,9 @@ public class PhotoGalleryFragment extends Fragment {
             GalleryItem galleryItem = mGalleryItems.get(position);
             //связываем фото с позицией
             photoHolder.bindGalleryItem(galleryItem);
+            lastBoundPosition = position;
+            Log.i(TAG, "Last bound position is " + Integer.toString(lastBoundPosition));
+
         }
 
         //метод возвращает размер галлери фото
@@ -120,8 +144,18 @@ public class PhotoGalleryFragment extends Fragment {
         //Этот метод получает список, загруженный в doInBackground(…), помещает его в mItems и обновляет адаптер RecyclerView.
         @Override
         protected void onPostExecute(List<GalleryItem> items) {
-            mItems = items;
-            setupAdapter();
+            if (lastFetchedPage > 1) {
+                mItems.addAll(items);
+                mPhotoRecyclerView.getAdapter().notifyDataSetChanged();
+            } else {
+                mItems = items;
+                setupAdapter();
+            }
+            lastFetchedPage++;
+        }
+
+
+        public void execute(int i) {
         }
     }
 
