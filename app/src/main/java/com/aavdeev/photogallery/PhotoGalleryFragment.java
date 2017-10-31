@@ -24,6 +24,7 @@ public class PhotoGalleryFragment extends Fragment {
     private static final String TAG = "PhotoGalleryFragment";
     private List<GalleryItem> mItems = new ArrayList<>();
     private int lastFetchedPage = 1;
+    private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
 
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
@@ -35,7 +36,14 @@ public class PhotoGalleryFragment extends Fragment {
        //удержание фрагмента чтобы поворот не приводил к многократному созданию новых объектов AsyncTask
         setRetainInstance(true);
         new FetchItemsTask().execute();
-
+//Создаем экземпляр ThumbnailDownloader
+        mThumbnailDownloader = new ThumbnailDownloader<>();
+        //Запускаем ThumbnailDownloader
+        mThumbnailDownloader.start();
+        //получаем цыкл
+        mThumbnailDownloader.getLooper();
+        //выводим сообщение в лог
+        Log.i(TAG, "Background thread started ");
     }
 
     @Nullable
@@ -79,6 +87,16 @@ public class PhotoGalleryFragment extends Fragment {
         });
         setupAdapter();
         return v;
+    }
+
+    //Удаление потока
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //команда прекращения потока
+        mThumbnailDownloader.quit();
+       //пишем в лог, поток уничтожен
+        Log.i(TAG, "Background thread destroyed");
     }
 
     //метод проверяет состояние списка объектов GalleryItem
@@ -136,6 +154,7 @@ public class PhotoGalleryFragment extends Fragment {
             //связываем фото с позицией
             Drawable planceholder = getResources().getDrawable(R.drawable.bill_up_close);
             photoHolder.bindDrawable(planceholder);
+            mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getmUrl());
             lastBoundPosition = position;
             Log.i(TAG, "Last bound position is " + Integer.toString(lastBoundPosition));
 
