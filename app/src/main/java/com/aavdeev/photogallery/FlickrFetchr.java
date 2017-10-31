@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -76,7 +77,7 @@ public class FlickrFetchr {
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON: " + jsonString);
             JSONObject jsonObject = new JSONObject(jsonString);
-            parseGson(items, jsonString);
+            parseItems(items, jsonObject);
         } catch (JSONException je) {
             Log.e(TAG, "Failed to parse JSON", je);
         } catch (IOException e) {
@@ -86,7 +87,7 @@ public class FlickrFetchr {
         return items;
     }
 
-    private void parseGson(List<GalleryItem> items, String jsonString) {
+   /* private void parseGson(List<GalleryItem> items, String jsonString) {
         Gson gson = new GsonBuilder().create();
         Flickr flickr = gson.fromJson(jsonString, Flickr.class);
         for (Flickr.PhotosBean.PhotoBean p : flickr.photos.photo) {
@@ -95,13 +96,13 @@ public class FlickrFetchr {
             item.setmCaption(p.title);
             items.add(item);
         }
-    }
+    }*/
 
 
 
 
     //разбор json ответа
-  /*  private void parseItems(List<GalleryItem> items, JSONObject jsonObject)
+    private void parseItems(List<GalleryItem> items, JSONObject jsonObject)
             throws IOException, JSONException {
         JSONObject photosJsonObject = jsonObject.getJSONObject("photos");
         JSONArray photoJsonArray = photosJsonObject.getJSONArray("photo");
@@ -122,7 +123,7 @@ public class FlickrFetchr {
         }
 
 
-    }*/
+    }
 
 
 

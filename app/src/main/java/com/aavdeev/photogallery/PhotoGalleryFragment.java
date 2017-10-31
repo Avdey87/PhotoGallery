@@ -1,9 +1,12 @@
 package com.aavdeev.photogallery;
 
+import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -36,8 +39,16 @@ public class PhotoGalleryFragment extends Fragment {
        //удержание фрагмента чтобы поворот не приводил к многократному созданию новых объектов AsyncTask
         setRetainInstance(true);
         new FetchItemsTask().execute();
+        Handler responseHandler = new Handler();
 //Создаем экземпляр ThumbnailDownloader
-        mThumbnailDownloader = new ThumbnailDownloader<>();
+        mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
+        mThumbnailDownloader.setmThumbnailDownloaderListern(new ThumbnailDownloader.ThumbnailDownloaderListern<PhotoHolder>() {
+            @Override
+            public void onThumbnailDownloader(PhotoHolder photoHolder, Bitmap bitmap) {
+                Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+                photoHolder.bindDrawable(drawable);
+            }
+        });
         //Запускаем ThumbnailDownloader
         mThumbnailDownloader.start();
         //получаем цыкл
@@ -87,6 +98,14 @@ public class PhotoGalleryFragment extends Fragment {
         });
         setupAdapter();
         return v;
+    }
+
+    //уничтожение вью
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //уничтожение всех запросов очереди
+        mThumbnailDownloader.clearQueue();
     }
 
     //Удаление потока
