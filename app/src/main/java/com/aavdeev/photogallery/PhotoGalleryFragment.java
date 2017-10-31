@@ -1,6 +1,7 @@
 package com.aavdeev.photogallery;
 
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -89,20 +91,20 @@ public class PhotoGalleryFragment extends Fragment {
 
     //Класс удержатель для просмотра
     private class PhotoHolder extends RecyclerView.ViewHolder {
-        private TextView mTitleTextView;
+        private ImageView mItemImageView;
 
         //Удержатель фото
         public PhotoHolder(View itemView) {
             super(itemView);
             //в переменную записываем текст отображения
-            mTitleTextView = (TextView) itemView;
+            mItemImageView = (ImageView) itemView.findViewById(R.id.fragment_photo_hallery_image_view);
+
         }
 
-        //мето для сыези картинки с текстом
-        public void bindGalleryItem(GalleryItem item) {
-            mTitleTextView.setText(item.toString());
+        public void bindDrawable(Drawable drawable) {
+            mItemImageView.setImageDrawable(drawable);
         }
-    }
+       }
 
     // Класс переходник
     private class PhotoAdapter extends RecyclerView.Adapter<PhotoHolder> {
@@ -120,10 +122,10 @@ public class PhotoGalleryFragment extends Fragment {
         //Создаем тображение удержателя
         @Override
         public PhotoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            // в текст вью записываем текущую актиность
-            TextView textView = new TextView(getActivity());
-            //возращаем фото (ввиде текста)
-            return new PhotoHolder(textView);
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            View view = inflater.inflate(R.layout.gallery_item, parent,
+                    false);
+            return new PhotoHolder(view);
         }
 
         //метод связка
@@ -132,7 +134,8 @@ public class PhotoGalleryFragment extends Fragment {
             //устанавливаем текущую позицию картинки
             GalleryItem galleryItem = mGalleryItems.get(position);
             //связываем фото с позицией
-            photoHolder.bindGalleryItem(galleryItem);
+            Drawable planceholder = getResources().getDrawable(R.drawable.bill_up_close);
+            photoHolder.bindDrawable(planceholder);
             lastBoundPosition = position;
             Log.i(TAG, "Last bound position is " + Integer.toString(lastBoundPosition));
 
