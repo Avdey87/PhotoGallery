@@ -99,8 +99,6 @@ public class FlickrFetchr {
     }*/
 
 
-
-
     //разбор json ответа
     private void parseItems(List<GalleryItem> items, JSONObject jsonObject)
             throws IOException, JSONException {
@@ -124,10 +122,6 @@ public class FlickrFetchr {
 
 
     }
-
-
-
-
 
 
 }
