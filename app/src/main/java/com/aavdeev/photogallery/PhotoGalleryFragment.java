@@ -22,6 +22,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.sephiroth.android.library.picasso.Picasso;
+
 public class PhotoGalleryFragment extends Fragment {
     private RecyclerView mPhotoRecyclerView;
     private static final String TAG = "PhotoGalleryFragment";
@@ -138,6 +140,13 @@ public class PhotoGalleryFragment extends Fragment {
 
         }
 
+        public void bindGalleryItem(GalleryItem galleryItem) {
+            Picasso.with(getActivity())
+                    .load(galleryItem.getmUrl())
+                    .placeholder(R.drawable.bill_up_close)
+                    .into(mItemImageView);
+        }
+
         public void bindDrawable(Drawable drawable) {
             mItemImageView.setImageDrawable(drawable);
         }
@@ -170,12 +179,14 @@ public class PhotoGalleryFragment extends Fragment {
         public void onBindViewHolder(PhotoHolder photoHolder, int position) {
             //устанавливаем текущую позицию картинки
             GalleryItem galleryItem = mGalleryItems.get(position);
+           photoHolder.bindGalleryItem(galleryItem);
+
             //связываем фото с позицией
-            Drawable planceholder = getResources().getDrawable(R.drawable.bill_up_close);
+         /*   Drawable planceholder = getResources().getDrawable(R.drawable.bill_up_close);
             photoHolder.bindDrawable(planceholder);
             mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getmUrl());
             lastBoundPosition = position;
-            Log.i(TAG, "Last bound position is " + Integer.toString(lastBoundPosition));
+            Log.i(TAG, "Last bound position is " + Integer.toString(lastBoundPosition));*/
 
         }
 
