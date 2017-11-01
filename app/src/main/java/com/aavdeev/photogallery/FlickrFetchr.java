@@ -77,7 +77,7 @@ public class FlickrFetchr {
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON: " + jsonString);
             JSONObject jsonObject = new JSONObject(jsonString);
-            parseItems(items, jsonObject);
+            parseGson(items, jsonString);
         } catch (JSONException je) {
             Log.e(TAG, "Failed to parse JSON", je);
         } catch (IOException e) {
@@ -87,20 +87,21 @@ public class FlickrFetchr {
         return items;
     }
 
-   /* private void parseGson(List<GalleryItem> items, String jsonString) {
+    private void parseGson(List<GalleryItem> items, String jsonString) {
         Gson gson = new GsonBuilder().create();
         Flickr flickr = gson.fromJson(jsonString, Flickr.class);
         for (Flickr.PhotosBean.PhotoBean p : flickr.photos.photo) {
             GalleryItem item = new GalleryItem();
             item.setmId(p.id);
             item.setmCaption(p.title);
+            item.setmUrl(p.url_s);
             items.add(item);
         }
-    }*/
+    }
 
 
     //разбор json ответа
-    private void parseItems(List<GalleryItem> items, JSONObject jsonObject)
+  /*  private void parseItems(List<GalleryItem> items, JSONObject jsonObject)
             throws IOException, JSONException {
         JSONObject photosJsonObject = jsonObject.getJSONObject("photos");
         JSONArray photoJsonArray = photosJsonObject.getJSONArray("photo");
@@ -121,7 +122,7 @@ public class FlickrFetchr {
         }
 
 
-    }
+    }*/
 
 
 }

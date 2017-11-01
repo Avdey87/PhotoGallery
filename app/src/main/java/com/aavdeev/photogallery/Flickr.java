@@ -93,6 +93,7 @@ public class Flickr {
              */
 
             public String id;
+            public String url_s;
             private String owner;
             private String secret;
             public String server;
