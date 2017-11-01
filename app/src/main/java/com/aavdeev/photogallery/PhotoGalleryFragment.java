@@ -15,10 +15,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -40,11 +42,11 @@ public class PhotoGalleryFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       //удержание фрагмента чтобы поворот не приводил к многократному созданию новых объектов AsyncTask
+        //удержание фрагмента чтобы поворот не приводил к многократному созданию новых объектов AsyncTask
         setRetainInstance(true);
         //устанавливаем окошко меню
         setHasOptionsMenu(true);
-        new FetchItemsTask().execute();
+        updateItems();
         Handler responseHandler = new Handler();
 //Создаем экземпляр ThumbnailDownloader
         mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
@@ -120,7 +122,7 @@ public class PhotoGalleryFragment extends Fragment {
         super.onDestroy();
         //команда прекращения потока
         mThumbnailDownloader.quit();
-       //пишем в лог, поток уничтожен
+        //пишем в лог, поток уничтожен
         Log.i(TAG, "Background thread destroyed");
     }
 
@@ -129,6 +131,32 @@ public class PhotoGalleryFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_photo_gallery, menu);
+
+        //получаем поле MenuItem представляющее поле поиска
+        final MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+        //searchView извлекаем объект SearchView методом getActionView
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+        //устанавливаем слушетеля на searchView
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            //Отправка запроса от пользователя
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d(TAG, "QeryTextSubmit: " + query);
+                updateItems();
+                return true;
+            }
+
+            //выполняется прикаждом изменении текста в текстовом поле
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d(TAG, "QueryTextChange: " + newText);
+                return false;
+            }
+        });
+    }
+
+    private void updateItems() {
+        new FetchItemsTask().execute();
     }
 
     //метод проверяет состояние списка объектов GalleryItem
@@ -161,7 +189,7 @@ public class PhotoGalleryFragment extends Fragment {
         public void bindDrawable(Drawable drawable) {
             mItemImageView.setImageDrawable(drawable);
         }
-       }
+    }
 
     // Класс переходник
     private class PhotoAdapter extends RecyclerView.Adapter<PhotoHolder> {
@@ -190,7 +218,7 @@ public class PhotoGalleryFragment extends Fragment {
         public void onBindViewHolder(PhotoHolder photoHolder, int position) {
             //устанавливаем текущую позицию картинки
             GalleryItem galleryItem = mGalleryItems.get(position);
-           photoHolder.bindGalleryItem(galleryItem);
+            photoHolder.bindGalleryItem(galleryItem);
 
             //связываем фото с позицией
          /*   Drawable planceholder = getResources().getDrawable(R.drawable.bill_up_close);
