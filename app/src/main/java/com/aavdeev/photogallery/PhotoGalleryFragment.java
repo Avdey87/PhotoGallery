@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.support.v7.widget.SearchView;
-import android.widget.TextView;
+
 
 
 
@@ -140,6 +140,7 @@ public class PhotoGalleryFragment extends Fragment {
         final SearchView searchView = (SearchView) searchItem.getActionView();
         //устанавливаем слушетеля на searchView
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
             //Отправка запроса от пользователя
             @Override
             public boolean onQueryTextSubmit(String s) {
