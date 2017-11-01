@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,28 +129,28 @@ public class PhotoGalleryFragment extends Fragment {
 
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.fragment_photo_gallery, menu);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        super.onCreateOptionsMenu(menu, menuInflater);
+        menuInflater.inflate(R.menu.fragment_photo_gallery, menu);
 
         //получаем поле MenuItem представляющее поле поиска
-        final MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+        MenuItem searchItem = menu.findItem(R.id.menu_item_search);
         //searchView извлекаем объект SearchView методом getActionView
         final SearchView searchView = (SearchView) searchItem.getActionView();
         //устанавливаем слушетеля на searchView
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             //Отправка запроса от пользователя
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                Log.d(TAG, "QeryTextSubmit: " + query);
+            public boolean onQueryTextSubmit(String s) {
+                Log.d(TAG, "QueryTextSubmit: " + s);
                 updateItems();
                 return true;
             }
 
             //выполняется прикаждом изменении текста в текстовом поле
             @Override
-            public boolean onQueryTextChange(String newText) {
-                Log.d(TAG, "QueryTextChange: " + newText);
+            public boolean onQueryTextChange(String s) {
+                Log.d(TAG, "QueryTextChange: " + s);
                 return false;
             }
         });
