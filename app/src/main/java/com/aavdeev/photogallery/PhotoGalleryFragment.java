@@ -13,6 +13,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -40,6 +42,8 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
        //удержание фрагмента чтобы поворот не приводил к многократному созданию новых объектов AsyncTask
         setRetainInstance(true);
+        //устанавливаем окошко меню
+        setHasOptionsMenu(true);
         new FetchItemsTask().execute();
         Handler responseHandler = new Handler();
 //Создаем экземпляр ThumbnailDownloader
@@ -118,6 +122,13 @@ public class PhotoGalleryFragment extends Fragment {
         mThumbnailDownloader.quit();
        //пишем в лог, поток уничтожен
         Log.i(TAG, "Background thread destroyed");
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_photo_gallery, menu);
     }
 
     //метод проверяет состояние списка объектов GalleryItem
