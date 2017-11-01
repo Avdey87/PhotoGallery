@@ -205,7 +205,15 @@ public class PhotoGalleryFragment extends Fragment {
         //загрузка файлов в фоновм резиме
         @Override
         protected List<GalleryItem> doInBackground(Void... params) {
-            return new FlickrFetchr().fetchItems();
+            String query = "root"; //для тестов
+            //если писковый запрс равен null
+            if (query == null) {
+                //выводим последнии фото
+                return new FlickrFetchr().fetchRecentPhotos();
+            } else {
+                //получаем результат поиска
+                return new FlickrFetchr().searchPhotos(query);
+            }
         }
 
         //метод обновляет поле mItems и вызвывает setupAdapter() после загрузки фото для обновления источника
