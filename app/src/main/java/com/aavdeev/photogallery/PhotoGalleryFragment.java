@@ -1,5 +1,6 @@
 package com.aavdeev.photogallery;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
@@ -22,8 +23,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.support.v7.widget.SearchView;
-
-
 
 
 import java.util.ArrayList;
@@ -50,6 +49,10 @@ public class PhotoGalleryFragment extends Fragment {
         //устанавливаем окошко меню
         setHasOptionsMenu(true);
         updateItems();
+        //код запуска службы
+        Intent i = PollService.newIntent(getActivity());
+        getActivity().startService(i);
+
         Handler responseHandler = new Handler();
 //Создаем экземпляр ThumbnailDownloader
         mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
@@ -77,19 +80,26 @@ public class PhotoGalleryFragment extends Fragment {
         mPhotoRecyclerView = (RecyclerView) v
                 .findViewById(R.id.fragment_photo_gallery_recycle_view);
         mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columns));
-        mPhotoRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                Point size = new Point();
-                getActivity().getWindowManager().getDefaultDisplay().getSize(size);
-                int newColumns = (int) Math.floor(size.x * 3 / 1440);
-                if (newColumns != columns) {
-                    GridLayoutManager layoutManager = (GridLayoutManager) mPhotoRecyclerView.getLayoutManager();
-                    layoutManager.setSpanCount(newColumns);
-                }
-            }
-        });
+
+        //  mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+
+        mPhotoRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener
+                (new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        Point size = new Point();
+                        getActivity().getWindowManager().getDefaultDisplay().getSize(size);
+                        int newColumns = (int) Math.floor(size.x * 3 / 1440);
+                        if (newColumns != columns) {
+                            GridLayoutManager layoutManager = (GridLayoutManager) mPhotoRecyclerView.getLayoutManager();
+                            layoutManager.setSpanCount(newColumns);
+                        }
+                    }
+                });
         mPhotoRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            //просто переменная
+            private String query;
+
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 PhotoAdapter adapter = (PhotoAdapter) recyclerView.getAdapter();
@@ -97,7 +107,7 @@ public class PhotoGalleryFragment extends Fragment {
                 GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 int loadBufferPosition = 1;
                 if (lastPosicion >= adapter.getItemCount() - layoutManager.getSpanCount() - loadBufferPosition) {
-                 //  new FetchItemsTask().execute(lastPosicion + 1);
+                    new FetchItemsTask(query).execute(lastPosicion + 1);
                 }
             }
 
@@ -141,7 +151,6 @@ public class PhotoGalleryFragment extends Fragment {
         final SearchView searchView = (SearchView) searchItem.getActionView();
         //устанавливаем слушетеля на searchView
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
             //Отправка запроса от пользователя
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -162,13 +171,13 @@ public class PhotoGalleryFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String query = QueryPreferences.getStoredQuery(getActivity());
-                searchView.setQuery(query,false);
+                searchView.setQuery(query, false);
             }
         });
 
     }
 
-   //метод обработки нажатия на меню
+    //метод обработки нажатия на меню
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -273,12 +282,13 @@ public class PhotoGalleryFragment extends Fragment {
         public FetchItemsTask(String query) {
             mQuery = query;
         }
+
         //возвращает список элементов GalleryItem
         //загрузка файлов в фоновм резиме
         @Override
         protected List<GalleryItem> doInBackground(Void... params) {
-                      //если писковый запрс равен null
-            if (mQuery== null) {
+            //если писковый запрс равен null
+            if (mQuery == null) {
                 //выводим последнии фото
                 return new FlickrFetchr().fetchRecentPhotos();
             } else {
