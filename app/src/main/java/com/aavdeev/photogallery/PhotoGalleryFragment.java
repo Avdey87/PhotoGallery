@@ -50,8 +50,11 @@ public class PhotoGalleryFragment extends Fragment {
         setHasOptionsMenu(true);
         updateItems();
         //код запуска службы
-        Intent i = PollService.newIntent(getActivity());
-        getActivity().startService(i);
+        /*Intent i = PollService.newIntent(getActivity());
+        getActivity().startService(i);*/
+
+        //ТЕСТ
+        PollService.setServiceAlarm(getActivity(), true);
 
         Handler responseHandler = new Handler();
 //Создаем экземпляр ThumbnailDownloader
