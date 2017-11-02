@@ -19,8 +19,10 @@ import java.util.List;
 
 public class PollService extends IntentService {
     private static final String TAG = "PollService";
-    // интервал 60 секунд
+    // интервал 60 секунд для тестов
     private static final long POLL_INTERVAL = 1000 * 60;
+    //рабочая
+    //private static final long POLL_INTERVAL = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 
     //Каждый компонет который использует данну юслужбу
     //должен использовать newIntent
