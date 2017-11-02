@@ -1,12 +1,15 @@
 package com.aavdeev.photogallery;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
 
 
 public class QueryPreferences {
    //ключ для хранения запроса
     private static final String PREF_SEARCH_QUERY = "searchQuery";
+    //хранение индетификатора
+    private static final String PREF_LAST_RESULT_ID = "lastResultId";
 
     //возвращает значение запроса
     public static String getStoredQuery(Context context) {
@@ -25,6 +28,18 @@ public class QueryPreferences {
                 //с ключем PREF_SEARCH_QUERY
                 .putString(PREF_SEARCH_QUERY, query)
                 //внести изменения
+                .apply();
+    }
+
+    public static String getPrefLastResultId(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(PREF_LAST_RESULT_ID, null);
+    }
+
+    public static void setPrefLastResultId(Context context, String lastResultId) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putString(PREF_LAST_RESULT_ID, lastResultId)
                 .apply();
     }
 }
