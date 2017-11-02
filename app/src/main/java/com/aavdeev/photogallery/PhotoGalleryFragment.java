@@ -97,7 +97,7 @@ public class PhotoGalleryFragment extends Fragment {
                 GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 int loadBufferPosition = 1;
                 if (lastPosicion >= adapter.getItemCount() - layoutManager.getSpanCount() - loadBufferPosition) {
-                    new FetchItemsTask().execute(lastPosicion + 1);
+                 //  new FetchItemsTask().execute(lastPosicion + 1);
                 }
             }
 
@@ -146,6 +146,7 @@ public class PhotoGalleryFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 Log.d(TAG, "QueryTextSubmit: " + s);
+                QueryPreferences.setStrongedQuery(getActivity(), s);
                 updateItems();
                 return true;
             }
@@ -159,8 +160,24 @@ public class PhotoGalleryFragment extends Fragment {
         });
     }
 
+   //метод обработки нажатия на меню
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            //если нажато очитсть
+            case R.id.menu_item_clear:
+                //QueryPreferences присваеваем null
+                QueryPreferences.setStrongedQuery(getContext(), null);
+                updateItems();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void updateItems() {
-        new FetchItemsTask().execute();
+        String query = QueryPreferences.getStoredQuery(getActivity());
+        new FetchItemsTask(query).execute();
     }
 
     //метод проверяет состояние списка объектов GalleryItem
@@ -243,19 +260,22 @@ public class PhotoGalleryFragment extends Fragment {
 
     // третий параметр List<GalleryItem>> определяет тип результата AsyncTask он задает тип значений возвращаемого doInBackground(…), а также тип входного параметра onPostExecute(…).
     private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
+        private String mQuery;
 
+        public FetchItemsTask(String query) {
+            mQuery = query;
+        }
         //возвращает список элементов GalleryItem
         //загрузка файлов в фоновм резиме
         @Override
         protected List<GalleryItem> doInBackground(Void... params) {
-            String query = "root"; //для тестов
-            //если писковый запрс равен null
-            if (query == null) {
+                      //если писковый запрс равен null
+            if (mQuery== null) {
                 //выводим последнии фото
                 return new FlickrFetchr().fetchRecentPhotos();
             } else {
                 //получаем результат поиска
-                return new FlickrFetchr().searchPhotos(query);
+                return new FlickrFetchr().searchPhotos(mQuery);
             }
         }
 
