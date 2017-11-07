@@ -24,6 +24,8 @@ public class PollService extends IntentService {
     //рабочая
     //private static final long POLL_INTERVAL = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 
+    public static final String ACTION_SHOW_NOTIFICATION = "com.aavdeev.photogallery.SHOW_NOTIFICATION";
+
     //Каждый компонет который использует данну юслужбу
     //должен использовать newIntent
     public static Intent newIntent(Context context) {
@@ -103,6 +105,8 @@ public class PollService extends IntentService {
 
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
             notificationManagerCompat.notify(0,notification);
+
+            sendBroadcast(new Intent(ACTION_SHOW_NOTIFICATION));
         }
         QueryPreferences.setPrefLastResultId(this, resultId);
     }

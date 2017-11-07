@@ -3,6 +3,8 @@ package com.aavdeev.photogallery;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -11,6 +13,13 @@ import android.support.annotation.RequiresApi;
 
 public class PollService2 extends JobService {
     private PollTask mCurrentTask;
+    private static final String TAG = "PollService2";
+    private static final long POLL_INTERVAL = 1000 * 60;
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, PollService2.class);
+    }
+
 
     private class PollTask extends AsyncTask<JobParameters, Void, Void> {
         @Override
