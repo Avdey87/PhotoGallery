@@ -14,6 +14,8 @@ public class PhotoGalleryActivity extends SingleFragmentActivity {
         return new Intent(context, PhotoGalleryActivity.class);
 
     }
+
+
     @Override
     protected Fragment createFragment() {
         return PhotoGalleryFragment.newInstance();
