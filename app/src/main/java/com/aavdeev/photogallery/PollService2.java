@@ -16,7 +16,9 @@ public class PollService2 extends JobService {
         @Override
         protected Void doInBackground(JobParameters... params) {
             JobParameters jobParams = params[0];
+            return null;
         }
+
     }
 
 
