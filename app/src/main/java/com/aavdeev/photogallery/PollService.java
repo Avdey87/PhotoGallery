@@ -92,8 +92,8 @@ public class PollService extends IntentService {
             Intent i = PhotoGalleryActivity.newIntent(this);
             PendingIntent pi = PendingIntent.getActivity(this, 0, i, 0);
 
-            //Notification notification = new NotificationCompat.Builder(this);
-                 /*   //текст бегущий стоки
+            Notification notification = new NotificationCompat.Builder(this)
+                    //текст бегущий стоки
                     .setTicker(resources.getString(R.string.new_pictures_title))
                     //значок вызова
                     .setSmallIcon(android.R.drawable.ic_menu_report_image)
@@ -107,10 +107,11 @@ public class PollService extends IntentService {
                     .setAutoCancel(true)
                     .build();
 
-            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+         /*   NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
             notificationManagerCompat.notify(0,notification);
 
             sendBroadcast(new Intent(ACTION_SHOW_NOTIFICATION));*/
+         showBackgroundNotification(0,notification);
         }
         QueryPreferences.setPrefLastResultId(this, resultId);
     }
