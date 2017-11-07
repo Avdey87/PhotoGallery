@@ -1,5 +1,6 @@
 package com.aavdeev.photogallery;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
@@ -25,6 +26,9 @@ public class PollService extends IntentService {
     //private static final long POLL_INTERVAL = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 
     public static final String ACTION_SHOW_NOTIFICATION = "com.aavdeev.photogallery.SHOW_NOTIFICATION";
+    public static final String PERM_PRIVATE = "com.aavdeev.photogallery.PRIVATE";
+    public static final String REQUEST_CODE = "REQUEST_CODE";
+    public static final String NOTIFICATION = "NOTIFICATION";
 
     //Каждый компонет который использует данну юслужбу
     //должен использовать newIntent
@@ -88,8 +92,8 @@ public class PollService extends IntentService {
             Intent i = PhotoGalleryActivity.newIntent(this);
             PendingIntent pi = PendingIntent.getActivity(this, 0, i, 0);
 
-            Notification notification = new NotificationCompat.Builder(this)
-                    //текст бегущий стоки
+            //Notification notification = new NotificationCompat.Builder(this);
+                 /*   //текст бегущий стоки
                     .setTicker(resources.getString(R.string.new_pictures_title))
                     //значок вызова
                     .setSmallIcon(android.R.drawable.ic_menu_report_image)
@@ -106,9 +110,17 @@ public class PollService extends IntentService {
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
             notificationManagerCompat.notify(0,notification);
 
-            sendBroadcast(new Intent(ACTION_SHOW_NOTIFICATION));
+            sendBroadcast(new Intent(ACTION_SHOW_NOTIFICATION));*/
         }
         QueryPreferences.setPrefLastResultId(this, resultId);
+    }
+
+    private void showBackgroundNotification(int requestCode, Notification notification) {
+        Intent i = new Intent(ACTION_SHOW_NOTIFICATION);
+        i.putExtra(REQUEST_CODE, requestCode);
+        i.putExtra(NOTIFICATION, notification);
+        sendOrderedBroadcast(i, PERM_PRIVATE, null, null,
+                Activity.RESULT_OK, null, null);
     }
 
     //проверка доступности сети
