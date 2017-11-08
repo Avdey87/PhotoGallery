@@ -74,7 +74,7 @@ public class Flickr {
         }
 
         public  class PhotoBean {
-          
+
             public String id;
             public String url_s;
             private String owner;

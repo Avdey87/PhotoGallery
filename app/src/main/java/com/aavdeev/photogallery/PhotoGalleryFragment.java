@@ -216,26 +216,41 @@ public class PhotoGalleryFragment extends VisibleFragment {
     }
 
     //Класс удержатель для просмотра
-    private class PhotoHolder extends RecyclerView.ViewHolder {
+    private class PhotoHolder extends RecyclerView.ViewHolder
+    implements View.OnClickListener{
         private ImageView mItemImageView;
+        private GalleryItem mGalleryItem;
 
         //Удержатель фото
         public PhotoHolder(View itemView) {
             super(itemView);
             //в переменную записываем текст отображения
-            mItemImageView = (ImageView) itemView.findViewById(R.id.fragment_photo_hallery_image_view);
+            mItemImageView = (ImageView) itemView
+                    .findViewById(R.id.fragment_photo_hallery_image_view);
+            itemView.setOnClickListener((View.OnClickListener) this);
+        }
 
+        public void bindDrawable(Drawable drawable) {
+            mItemImageView.setImageDrawable(drawable);
         }
 
         public void bindGalleryItem(GalleryItem galleryItem) {
+            mGalleryItem = galleryItem;
             Picasso.with(getActivity())
                     .load(galleryItem.getmUrl())
                     .placeholder(R.drawable.bill_up_close)
                     .into(mItemImageView);
         }
 
-        public void bindDrawable(Drawable drawable) {
-            mItemImageView.setImageDrawable(drawable);
+        //Обработчик нажатия на кнопку
+        @Override
+        public void onClick(View v) {
+            //неявный интент
+            /*Intent i = new Intent(Intent.ACTION_VIEW, mGalleryItem.
+                    getPhotoPageUri());*/
+            //Явный интент
+            Intent i = PhotoPageActivity.newIntent(getActivity(), mGalleryItem.getPhotoPageUri());
+            startActivity(i);
         }
     }
 
@@ -243,6 +258,7 @@ public class PhotoGalleryFragment extends VisibleFragment {
     private class PhotoAdapter extends RecyclerView.Adapter<PhotoHolder> {
         private List<GalleryItem> mGalleryItems;
         private int lastBoundPosition;
+
 
         public int getLastBoundPosition() {
             return lastBoundPosition;
