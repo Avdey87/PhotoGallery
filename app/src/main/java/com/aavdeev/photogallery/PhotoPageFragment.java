@@ -34,9 +34,13 @@ public class PhotoPageFragment extends VisibleFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
         mWebView = (WebView) v.findViewById(R.id.fragment_photo_page_web_view);
+        //включаем JavaScript
         mWebView.getSettings().setJavaScriptEnabled(true);
+        //устанавливаем WebViewClient
         mWebView.setWebViewClient(new WebViewClient(){
+            //указываем что должно происходить призагрузке URL
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                //false ставаится для загрузки данных с URL
                 return false;
             }
         });
