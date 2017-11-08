@@ -9,7 +9,7 @@ import android.content.IntentFilter;
 import android.util.Log;
 import android.widget.Toast;
 
-public abstract class VisibleFragment extends Fragment {
+public abstract class VisibleFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "VisibleFragment";
 
     private BroadcastReceiver mOnShowNotification = new BroadcastReceiver() {
