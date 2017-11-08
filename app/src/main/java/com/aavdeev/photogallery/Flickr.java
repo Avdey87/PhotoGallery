@@ -74,18 +74,7 @@ public class Flickr {
         }
 
         public  class PhotoBean {
-            /**
-             * id : 24116386528
-             * owner : 156464463@N04
-             * secret : a55f64eee5
-             * server : 4449
-             * farm : 5
-             * title : IMG_0283
-             * ispublic : 1
-             * isfriend : 0
-             * isfamily : 0
-             */
-
+          
             public String id;
             public String url_s;
             private String owner;
