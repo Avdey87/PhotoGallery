@@ -38,11 +38,11 @@ public class GalleryItem {
         this.mUrl = mUrl;
     }
 
-    public String getOwner() {
+    public String getmOwner() {
         return mOwner;
     }
 
-    public void setOwner(String owner) {
+    public void setmOwner(String owner) {
         mOwner = owner;
     }
 
