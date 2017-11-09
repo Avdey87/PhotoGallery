@@ -1,5 +1,6 @@
 package com.aavdeev.photogallery;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -63,6 +64,7 @@ public class PhotoPageFragment extends VisibleFragment {
                 }
             }
 
+
             public void onReceivedTitle(WebView webView, String title) {
                 AppCompatActivity activity = (AppCompatActivity) getActivity();
                 activity.getSupportActionBar().setSubtitle(title);
@@ -73,8 +75,14 @@ public class PhotoPageFragment extends VisibleFragment {
         mWebView.setWebViewClient(new WebViewClient(){
             //указываем что должно происходить призагрузке URL
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                //false ставаится для загрузки данных с URL
-                return false;
+                if (url.startsWith("http//") || url.startsWith("https//")) {
+                    //false ставаится для загрузки данных с URL
+                    return false;
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(intent);
+                    return true;
+                }
             }
         });
 mWebView.loadUrl(mUri.toString());
