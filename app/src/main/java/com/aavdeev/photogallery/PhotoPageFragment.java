@@ -68,6 +68,8 @@ public class PhotoPageFragment extends VisibleFragment {
                 return false;
             }
         });
+mWebView.loadUrl(mUri.toString());
+
         return v;
     }
 }
