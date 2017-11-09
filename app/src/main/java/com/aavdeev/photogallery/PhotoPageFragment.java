@@ -28,6 +28,15 @@ public class PhotoPageFragment extends VisibleFragment {
         return fragment;
     }
 
+
+    public boolean webWiewCanGoBack() {
+        return mWebView.canGoBack();
+    }
+
+    public void webViewGoBack() {
+        mWebView.goBack();
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
